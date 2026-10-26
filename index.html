@@ -1095,6 +1095,7 @@
 <div id="printRoot" aria-hidden="true"></div>
 
 <script src="vendor/xlsx.full.min.js"></script>
+<script src="seed-data.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1161,6 +1162,7 @@
 
   const STORAGE_KEY = "ustb-calendar-2026-2027-v1";
   const TIMETABLE_KEY = "ustb-timetable-2026-2027-v1";
+  const SEED_DATA = window.__USTB_SEED__ && typeof window.__USTB_SEED__ === "object" ? window.__USTB_SEED__ : null;
 
   const PERIOD_OPTIONS = [
     { label: "第1-2节", time: "08:00–09:35" },
@@ -1457,7 +1459,10 @@
     if (demoMode) return normalizeTimetables(null);
     try {
       const text = localStorage.getItem(TIMETABLE_KEY);
-      if (!text) return normalizeTimetables(null);
+      if (!text){
+        if (SEED_DATA && SEED_DATA.timetables) return normalizeTimetables(SEED_DATA.timetables);
+        return normalizeTimetables(null);
+      }
       const parsed = JSON.parse(text);
       return normalizeTimetables(parsed.timetables || parsed);
     } catch (error) {
@@ -1689,7 +1694,10 @@
     if (demoMode) return SAMPLE_EVENTS.map(normalizeEvent).filter(Boolean);
     try {
       const text = localStorage.getItem(STORAGE_KEY);
-      if (!text) return [];
+      if (!text){
+        if (SEED_DATA && Array.isArray(SEED_DATA.events)) return SEED_DATA.events.map(normalizeEvent).filter(Boolean);
+        return [];
+      }
       const parsed = JSON.parse(text);
       const list = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.events) ? parsed.events : []);
       return list.map(normalizeEvent).filter(Boolean);
