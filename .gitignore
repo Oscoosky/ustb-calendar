@@ -1,0 +1,8 @@
+# Local-only screenshots and source calendar images
+preview/
+校历1.jpg
+校历2.jpg
+.DS_Store
+Thumbs.db
+node_modules/
+*.log
